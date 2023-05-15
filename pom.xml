@@ -94,7 +94,6 @@
 		<ongres-scram.version>2.1</ongres-scram.version>
 		<junit.version>5.9.1</junit.version>
 		<mockito.version>4.10.0</mockito.version>
-		<commonmark.version>0.21.0</commonmark.version>
 
 		<quarkus-base.version>2.13.7</quarkus-base.version>
 		<quarkus.version>${quarkus-base.version}.Final-redhat-00003</quarkus.version>
@@ -103,8 +102,8 @@
 		<quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
 		<quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
 
-		<vertx-base.version>4.2.7</vertx-base.version>
-		<vertx.version>${vertx-base.version}.redhat-00003</vertx.version>
+		<vertx-base.version>4.3.3</vertx-base.version>
+		<vertx.version>${vertx-base.version}.redhat-00006</vertx.version>
 
 		<jfreechart.version>1.5.3</jfreechart.version>
 		<handlebars.version>4.3.1</handlebars.version>
@@ -126,8 +125,6 @@
 		<kie.version>7.67.0.Final-redhat-00017</kie.version>
 		<drools.version>8.32.0.Final</drools.version>
 		<cloudevents.version>2.4.0</cloudevents.version>
-
-		<computate.version>4.2.7.22</computate.version>
 	</properties>
 
 	<dependencyManagement>
@@ -254,6 +251,54 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 
+		<!-- ####### -->
+		<!-- Quarkus -->
+		<!-- ####### -->
+
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-vertx</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.slf4j</groupId>
+					<artifactId>slf4j-jboss-logmanager</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.smallrye.reactive</groupId>
+			<artifactId>smallrye-mutiny-vertx-web-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-arc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-bootstrap-runner</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-junit5</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.slf4j</groupId>
+					<artifactId>slf4j-jboss-logmanager</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- logging -->
 
 		<dependency>
@@ -317,53 +362,6 @@
 			<artifactId>junit-platform-launcher</artifactId>
 			<scope>test</scope>
 			<version>1.4.2</version>
-		</dependency>
-
-		<!-- ##### -->
-		<!-- Camel -->
-		<!-- ##### -->
-
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-activemq</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-vertx</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-vertx-kafka</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.kafka</groupId>
-					<artifactId>kafka-clients</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-vertx-http</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core-languages</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jackson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jbpm</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-http</artifactId>
 		</dependency>
 	</dependencies>
 
