@@ -1,28 +1,5 @@
 openapi: 3.0.0
 info:
-  title: "vertx-bug"
-  version: 3.0.0
-paths:
-
-  /:
-    post:
-      operationId: postRequest
-      x-vertx-event-bus: orionld-smartvillage-sync-Entity
-      description: >+
-      summary: >+
-      tags:
-        - Entity
-      requestBody:
-        description: >+
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        '200':
-          description: >+
-          content:
-            application/json; charset=utf-8:
-              schema:
-                type: object
+  title: "orionld-smartvillage-sync"
+  version: 1.0.0
+paths: {}
