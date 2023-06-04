@@ -302,8 +302,8 @@ public class MainVerticle extends AbstractVerticle {
 					String entityId = entity.getString("id");
 					String entityType = entity.getString("type");
 					String entityTypeId = toId(entityType);
-					JsonObject importEntity = new JsonObject().put("id", entityId).put("inheritPk", entityId).put("type", entityType);
-					JsonArray importSaves = new JsonArray().add("id").add("inheritPk").add("type");
+					JsonObject importEntity = new JsonObject().put("id", entityId).put("entityId", entityId).put("inheritPk", entityId).put("type", entityType);
+					JsonArray importSaves = new JsonArray().add("id").add("entityId").add("inheritPk").add("type");
 					String smartvillageUri = String.format("/api/%s-import", entityTypeId);
 					for(String key : entity.fieldNames()) {
 						Object val = entity.getValue(key);
