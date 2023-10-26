@@ -1,5 +1,6 @@
 package org.computate.orionldsmartvillagesync.app;
 
+import java.net.URLEncoder;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,6 +198,10 @@ public class MainVerticle extends AbstractVerticle {
 	
 					router = routerBuilder.createRouter();
 					router.post("/").handler(eventHandler -> {
+						eventHandler.request().headers().forEach((h, v) -> {
+							LOG.info(String.format("Header received %s: %s", h, v));
+						});
+						LOG.info(String.format("Request received %s", eventHandler.getBodyAsJson()));
 						requestAuth(eventHandler).onSuccess(accessToken -> {
 							listPUTImportSmartDataModel(eventHandler, accessToken).onSuccess(a -> {
 								eventHandler.end(Buffer.buffer(new JsonObject().encodePrettily()));
@@ -294,38 +299,76 @@ public class MainVerticle extends AbstractVerticle {
 			String smartvillageHostName = config().getString(ConfigKeys.SMARTVILLAGE_HOST_NAME);
 			Integer smartvillagePort = config().getInteger(ConfigKeys.SMARTVILLAGE_PORT);
 			Boolean smartvillageSsl = config().getBoolean(ConfigKeys.SMARTVILLAGE_SSL);
-			jsonArray.forEach(obj -> {
-				JsonObject entity = (JsonObject)obj;
+
+			String ngsildHostName = config().getString(ConfigKeys.NGSI_LD_HOST_NAME);
+			Integer ngsildPort = config().getInteger(ConfigKeys.NGSI_LD_PORT);
+			Boolean ngsildSsl = config().getBoolean(ConfigKeys.NGSI_LD_SSL);
+
+			MultiMap headers = eventHandler.request().headers();
+			String fiwareService = headers.get("Fiware-Service");
+			String fiwareServicePath = headers.get("Fiware-ServicePath");
+			String ngsildTenant = headers.get("NGSILD-Tenant");
+			String ngsildPath = headers.get("NGSILD-Path");
+			String smartVillageApi = headers.get("SmartVillage-API");
+			String link = headers.get("Link");
+
+			jsonArray.forEach(subscriptionObj -> {
+				JsonObject subscriptionEntity = (JsonObject)subscriptionObj;
 				futures.add(Future.future(promise1 -> {
-					JsonObject importData = new JsonObject();
-					JsonArray importList = new JsonArray();
-					String entityId = entity.getString("id");
-					String entityType = entity.getString("type");
-					String entityTypeId = toId(entityType);
-					JsonObject importEntity = new JsonObject().put("id", entityId).put("entityId", entityId).put("inheritPk", entityId).put("type", entityType);
-					JsonArray importSaves = new JsonArray().add("id").add("entityId").add("inheritPk").add("type");
-					String smartvillageUri = String.format("/api/%s-import", entityTypeId);
-					for(String key : entity.fieldNames()) {
-						Object val = entity.getValue(key);
-						if(val instanceof JsonObject) {
-							Object value = ((JsonObject) val).getValue("value");
-							if(value != null) {
-								importEntity.put(key, value.toString());
-								importSaves.add(key);
+					try {
+						JsonObject importData = new JsonObject();
+						JsonArray importList = new JsonArray();
+						String entityId = subscriptionEntity.getString("id");
+						String entityType = subscriptionEntity.getString("type");
+						String ngsildUri = String.format("/ngsi-ld/v1/entities/%s", URLEncoder.encode(entityId, "UTF-8"));
+	
+						webClient.get(ngsildPort, ngsildHostName, ngsildUri).ssl(ngsildSsl)
+								.putHeader("Fiware-Service", fiwareService)
+								.putHeader("Fiware-ServicePath", fiwareServicePath)
+								.putHeader("NGSILD-Tenant", ngsildTenant)
+								.putHeader("NGSILD-PATH", ngsildPath)
+								.putHeader("Link", link)
+								.putHeader("Accept", "*/*")
+								.expect(ResponsePredicate.SC_OK)
+								.send().onSuccess(entityResponse -> {
+							LOG.info(String.format("Context Broker request received %s", entityResponse.bodyAsJsonObject()));
+							JsonObject entity = entityResponse.bodyAsJsonObject();
+							JsonObject importEntity = new JsonObject().put("id", entityId).put("entityId", entityId).put("inheritPk", entityId).put("type", entityType);
+							JsonArray importSaves = new JsonArray().add("id").add("entityId").add("inheritPk").add("type");
+							String smartvillageUri = String.format("%s-import", smartVillageApi);
+							for(String key : entity.fieldNames()) {
+								Object val = entity.getValue(key);
+								if(val instanceof JsonObject) {
+									Object value = ((JsonObject) val).getValue("value");
+									if(value != null) {
+										importEntity.put(key, value.toString());
+										importSaves.add(key);
+									}
+								}
 							}
-						}
-					}
-					importEntity.put("saves", importSaves);
-					importList.add(importEntity);
-					importData.put("list", importList);
-					LOG.info(String.format("%s %s %s %s %s", smartvillagePort, smartvillageHostName, smartvillageUri, smartvillageSsl, importData.encodePrettily()));
-					webClient.put(smartvillagePort, smartvillageHostName, smartvillageUri).ssl(smartvillageSsl).putHeader("Authorization", String.format("Bearer %s", accessToken)).putHeader("Content-Type", "application/json").expect(ResponsePredicate.SC_OK).sendJsonObject(importData).onSuccess(requestAuthResponse -> {
-						LOG.info(String.format("%s smart data model imported: %s", entityType, entityId));
-						promise1.complete(requestAuthResponse.bodyAsJsonObject());
-					}).onFailure(ex -> {
+							importEntity.put("saves", importSaves);
+							importList.add(importEntity);
+							importData.put("list", importList);
+							LOG.info(String.format("%s %s %s %s %s", smartvillagePort, smartvillageHostName, smartvillageUri, smartvillageSsl, importData.encodePrettily()));
+							webClient.put(smartvillagePort, smartvillageHostName, smartvillageUri).ssl(smartvillageSsl)
+									.putHeader("Authorization", String.format("Bearer %s", accessToken))
+									.putHeader("Content-Type", "application/json")
+									.expect(ResponsePredicate.SC_OK)
+									.sendJsonObject(importData).onSuccess(requestAuthResponse -> {
+								LOG.info(String.format("%s smart data model imported: %s", entityType, entityId));
+								promise1.complete(requestAuthResponse.bodyAsJsonObject());
+							}).onFailure(ex -> {
+								LOG.error(String.format("listPUTImportSmartDataModel failed. "), new RuntimeException(ex));
+								promise1.fail(ex);
+							});
+						}).onFailure(ex -> {
+							LOG.error(String.format("listPUTImportSmartDataModel failed. "), new RuntimeException(ex));
+							promise1.fail(ex);
+						});
+					} catch(Exception ex) {
 						LOG.error(String.format("listPUTImportSmartDataModel failed. "), new RuntimeException(ex));
 						promise1.fail(ex);
-					});
+					}
 				}));
 			});
 			CompositeFuture.all(futures).onSuccess(a -> {

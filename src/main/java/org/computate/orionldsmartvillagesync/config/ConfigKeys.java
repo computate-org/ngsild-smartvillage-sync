@@ -76,4 +76,9 @@ public class ConfigKeys {
 	 * Smarta Byar Smart Village application host name. 
 	 **/
 	public static final String SMARTVILLAGE_HOST_NAME = "SMARTVILLAGE_HOST_NAME";
+
+	public static final String NGSI_LD_CONTEXT = "NGSI_LD_CONTEXT";
+	public static final String NGSI_LD_HOST_NAME = "NGSI_LD_HOST_NAME";
+	public static final String NGSI_LD_PORT = "NGSI_LD_PORT";
+	public static final String NGSI_LD_SSL = "NGSI_LD_SSL";
 }
