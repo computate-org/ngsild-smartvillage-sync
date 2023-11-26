@@ -1,4 +1,4 @@
-package org.computate.orionldsmartvillagesync.api.entity;
+package org.computate.ngsildsmartvillagesync.api.entity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

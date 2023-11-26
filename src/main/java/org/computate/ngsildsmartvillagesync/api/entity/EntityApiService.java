@@ -1,4 +1,4 @@
-package org.computate.orionldsmartvillagesync.api.entity;
+package org.computate.ngsildsmartvillagesync.api.entity;
 
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.core.AsyncResult;
@@ -16,7 +16,7 @@ import io.vertx.serviceproxy.ServiceBinder;
 public interface EntityApiService {
 
 	static void registerService(EventBus eventBus, JsonObject config, Vertx vertx) {
-		new ServiceBinder(vertx).setAddress("orionld-smartvillage-sync-Entity").register(EntityApiService.class, new EntityApiServiceImpl(eventBus, config));
+		new ServiceBinder(vertx).setAddress("ngsild-smartvillage-sync-Entity").register(EntityApiService.class, new EntityApiServiceImpl(eventBus, config));
 	}
 
 	public void postRequest(JsonObject body, ServiceRequest serviceRequest, Handler<AsyncResult<ServiceResponse>> eventHandler);

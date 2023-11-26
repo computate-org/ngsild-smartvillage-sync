@@ -1,4 +1,4 @@
-package org.computate.orionldsmartvillagesync.config;
+package org.computate.ngsildsmartvillagesync.config;
 
 public class ConfigKeys {
 

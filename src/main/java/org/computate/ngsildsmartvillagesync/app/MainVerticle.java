@@ -1,4 +1,4 @@
-package org.computate.orionldsmartvillagesync.app;
+package org.computate.ngsildsmartvillagesync.app;
 
 import java.net.URLEncoder;
 import java.text.Normalizer;
@@ -9,8 +9,8 @@ import java.util.Optional;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.computate.orionldsmartvillagesync.api.entity.EntityApiService;
-import org.computate.orionldsmartvillagesync.config.ConfigKeys;
+import org.computate.ngsildsmartvillagesync.api.entity.EntityApiService;
+import org.computate.ngsildsmartvillagesync.config.ConfigKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -352,6 +352,11 @@ public class MainVerticle extends AbstractVerticle {
 							LOG.info(String.format("%s %s %s %s %s", smartvillagePort, smartvillageHostName, smartvillageUri, smartvillageSsl, importData.encodePrettily()));
 							webClient.put(smartvillagePort, smartvillageHostName, smartvillageUri).ssl(smartvillageSsl)
 									.putHeader("Authorization", String.format("Bearer %s", accessToken))
+									.putHeader("Fiware-Service", fiwareService)
+									.putHeader("Fiware-ServicePath", fiwareServicePath)
+									.putHeader("NGSILD-Tenant", ngsildTenant)
+									.putHeader("NGSILD-PATH", ngsildPath)
+									.putHeader("Link", link)
 									.putHeader("Content-Type", "application/json")
 									.expect(ResponsePredicate.SC_OK)
 									.sendJsonObject(importData).onSuccess(requestAuthResponse -> {

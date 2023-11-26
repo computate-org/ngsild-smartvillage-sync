@@ -5,17 +5,17 @@
 
 ```bash
 cd ~/.local/src/TLC
-podman build -t computateorg/orionld-smartvillage-sync:latest .
+podman build -t computateorg/ngsild-smartvillage-sync:latest .
 ```
 
 ### Push the container up to quay.io
 ```bash
 podman login quay.io
-podman push computateorg/orionld-smartvillage-sync:latest quay.io/computateorg/orionld-smartvillage-sync:latest
+podman push computateorg/ngsild-smartvillage-sync:latest quay.io/computateorg/ngsild-smartvillage-sync:latest
 ```
 
 ### Run the container for local development
 
 ```bash
-podman run computateorg/orionld-smartvillage-sync:latest
+podman run computateorg/ngsild-smartvillage-sync:latest
 ```

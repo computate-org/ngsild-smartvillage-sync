@@ -1,5 +1,5 @@
 openapi: 3.0.0
 info:
-  title: "orionld-smartvillage-sync"
+  title: "ngsild-smartvillage-sync"
   version: 1.0.0
 paths: {}

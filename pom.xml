@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.computate</groupId>
-	<artifactId>orionld-smartvillage-sync</artifactId>
+	<artifactId>ngsild-smartvillage-sync</artifactId>
 	<version>1.0.0</version>
 	<name>Orion-LD Smart Village Sync</name>
 	<description>Recive Orion-LD entity subscription updates and send them securely to the Smarta Byar Smart Village application in the cloud. </description>
@@ -46,9 +46,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/computate-org/orionld-smartvillage-sync.git</connection>
-		<developerConnection>scm:git:ssh://github.com:computate-org/orionld-smartvillage-sync.git</developerConnection>
-		<url>http://github.com/computate-org/orionld-smartvillage-sync/tree/master</url>
+		<connection>scm:git:git://github.com/computate-org/ngsild-smartvillage-sync.git</connection>
+		<developerConnection>scm:git:ssh://github.com:computate-org/ngsild-smartvillage-sync.git</developerConnection>
+		<url>http://github.com/computate-org/ngsild-smartvillage-sync/tree/master</url>
 	</scm>
 
 	<repositories>
@@ -362,7 +362,7 @@
 			<executable>maven</executable>
 			<includePluginDependencies>false</includePluginDependencies>
 			<includeProjectDependencies>true</includeProjectDependencies>
-			<mainClass>org.computate.orionldsmartvillagesync.app.MainVerticle</mainClass>
+			<mainClass>org.computate.ngsildsmartvillagesync.app.MainVerticle</mainClass>
 		</configuration>
 	</plugin>
 
