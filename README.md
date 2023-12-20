@@ -4,7 +4,7 @@
 ### Build the container with podman
 
 ```bash
-cd ~/.local/src/TLC
+cd ~/.local/src/ngsild-smartvillage-sync
 podman build -t computateorg/ngsild-smartvillage-sync:latest .
 ```
 

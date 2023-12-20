@@ -305,12 +305,12 @@ public class MainVerticle extends AbstractVerticle {
 			Boolean ngsildSsl = config().getBoolean(ConfigKeys.NGSI_LD_SSL);
 
 			MultiMap headers = eventHandler.request().headers();
-			String fiwareService = headers.get("Fiware-Service");
-			String fiwareServicePath = headers.get("Fiware-ServicePath");
-			String ngsildTenant = headers.get("NGSILD-Tenant");
-			String ngsildPath = headers.get("NGSILD-Path");
-			String smartVillageApi = headers.get("SmartVillage-API");
-			String link = headers.get("Link");
+			final String fiwareService = headers.get("Fiware-Service");
+			final String fiwareServicePath = headers.get("Fiware-ServicePath");
+			final String ngsildTenant = headers.get("NGSILD-Tenant");
+			final String ngsildPath = headers.get("NGSILD-Path");
+			final String smartVillageApi = headers.get("SmartVillage-API");
+			final String link = headers.get("Link");
 
 			jsonArray.forEach(subscriptionObj -> {
 				JsonObject subscriptionEntity = (JsonObject)subscriptionObj;
@@ -326,7 +326,7 @@ public class MainVerticle extends AbstractVerticle {
 								.putHeader("Fiware-Service", fiwareService)
 								.putHeader("Fiware-ServicePath", fiwareServicePath)
 								.putHeader("NGSILD-Tenant", ngsildTenant)
-								.putHeader("NGSILD-PATH", ngsildPath)
+								.putHeader("NGSILD-Path", ngsildPath)
 								.putHeader("Link", link)
 								.putHeader("Accept", "*/*")
 								.expect(ResponsePredicate.SC_OK)
@@ -341,7 +341,11 @@ public class MainVerticle extends AbstractVerticle {
 								if(val instanceof JsonObject) {
 									Object value = ((JsonObject) val).getValue("value");
 									if(value != null) {
-										importEntity.put(key, value.toString());
+										if(value instanceof JsonObject || value instanceof JsonArray || value instanceof Boolean) {
+											importEntity.put(key, value);
+										} else {
+											importEntity.put(key, value.toString());
+										}
 										importSaves.add(key);
 									}
 								}
@@ -350,12 +354,13 @@ public class MainVerticle extends AbstractVerticle {
 							importList.add(importEntity);
 							importData.put("list", importList);
 							LOG.info(String.format("%s %s %s %s %s", smartvillagePort, smartvillageHostName, smartvillageUri, smartvillageSsl, importData.encodePrettily()));
+							LOG.info(String.format("Fiware-Service: %s, Fiware-ServicePath: %s, NGSILD-Tenant: %s, NGSILD-Path: %s", fiwareService, fiwareServicePath, ngsildTenant, ngsildPath));
 							webClient.put(smartvillagePort, smartvillageHostName, smartvillageUri).ssl(smartvillageSsl)
 									.putHeader("Authorization", String.format("Bearer %s", accessToken))
 									.putHeader("Fiware-Service", fiwareService)
 									.putHeader("Fiware-ServicePath", fiwareServicePath)
 									.putHeader("NGSILD-Tenant", ngsildTenant)
-									.putHeader("NGSILD-PATH", ngsildPath)
+									.putHeader("NGSILD-Path", ngsildPath)
 									.putHeader("Link", link)
 									.putHeader("Content-Type", "application/json")
 									.expect(ResponsePredicate.SC_OK)
